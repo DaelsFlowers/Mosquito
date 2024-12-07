@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detección de Mosquitos</title>
+</head>
+<body>
+    <h1>Detector de Mosquitos</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="imagen" name="imagen" accept="image/*" required>
+        <button type="submit">Procesar Imagen</button>
+    </form>
+    <div id="resultado"></div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const resultado = document.getElementById('resultado');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            const response = await fetch('/procesar-imagen', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const imgBlob = await response.blob();
+                const imgUrl = URL.createObjectURL(imgBlob);
+                resultado.innerHTML = `<img src="${imgUrl}" alt="Resultado">`;
+            } else {
+                const error = await response.json();
+                resultado.textContent = `Error: ${error.error}`;
+            }
+        });
+    </script>
+</body>
+</html>
